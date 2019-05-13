@@ -2,21 +2,6 @@
 
 # RaspberryPi
 
-- Write OS to SD with PiBakery
-
-- Show IP
-
-```bash
-$ ip a
-```
-
-- ssh
-
-```bash
-# default password is "raspberry"
-$ ssh pi@[ip adress]
-```
-
 - run k3s agent
 
 ```bash
@@ -55,7 +40,7 @@ import time
 GPIO.setmode(GPIO.BCM) 
 GPIO.setup(2,GPIO.OUT)
 
-for iLoop in range(5):
+while True:
   GPIO.output(2,True)   
   time.sleep(1)
   GPIO.output(2,False)   
@@ -64,46 +49,26 @@ for iLoop in range(5):
 GPIO.cleanup()
 ```
 
-- connect to wifi
-
-```bash
-$ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
-
-# change ssid and psk
-
-$ sudo reboot
-```
-
-- create permanent alias
-
-```bash
-$ vi ~/.bash_aliases
-
-# write (e.g. alias update='sudo yum update')
-```
-
-# vi
-
-- delete line
-
-dd
-
-- move to the end on line 
-
-$
-
-- move to the bottom
-
-L
-
 # Docker
 
 - install
 
 ```bash
+$ curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
+
 $ sudo systemctl enable docker
 
 $ sudo systemctl start docker
+```
+
+- run without sudo
+
+```bash
+$ sudo groupadd docker
+
+$ sudo gpasswd -a $USER docker
+
+$ newgrp docker
 ```
 
 - Dockerfile
@@ -138,25 +103,22 @@ $ sudo docker push kyohmizu/raspi-sample
 apiVersion: v1
 kind: Pod
 metadata:
-  name: blinker
+  name: sample
 spec:
   containers:
-    - name: blinker
+    - name: sample
       image: kyohmizu/raspi-sample
       securityContext:
         privileged: true
       volumeMounts:
         - mountPath: /sys/class/gpio
           name: gpio
-        - mountPath: /sys/devices/platform/pinctrl/gpio
-          name: device
+  nodeSelector:
+      kubernetes.io/arch: arm
   volumes:
   - name: gpio
     hostPath:
       path: /sys/class/gpio
-  - name: device
-    hostPath:
-      path: /sys/devices/platform/pinctrl/gpio
 ```
 
 # Links
