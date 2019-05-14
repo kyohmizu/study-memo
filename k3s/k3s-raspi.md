@@ -8,6 +8,7 @@
 # download k3s
 $ curl -fsSL https://github.com/rancher/k3s/releases/download/v0.4.0/k3s-armhf -o k3s
 $ chmod +x k3s
+$ mv k3s /usr/bin/
 
 $ sudo k3s agent --server https://myserver:6443 --token ${NODE_TOKEN}
 ```
